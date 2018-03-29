@@ -4,4 +4,9 @@ from django.template import loader
 # Create your views here
 
 def blog_index(request):
-    return HttpResponse('Hello World!')
+
+    context ={
+        'test': 'just for test',
+        'welcome': 'hello world!',
+    }
+    return render(request, 'blog_index.html',context)
