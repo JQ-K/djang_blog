@@ -1,11 +1,7 @@
-<!DOCTYPE HTML>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-    <p>{{ test  }}</p>
-    <p>{{ welcome  }}</p>
-</body>
-</html>
+{% extends 'blog_base.html'%}
+
+
+{% block content %}
+<p>{{ test }}</p>
+<p>{{ welcome }}</p>
+{% endblock %}
