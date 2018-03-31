@@ -21,4 +21,6 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     #blog
     url(r'^blog/', include('blog.urls')),
+    url('^', include('django.contrib.auth.urls')),
+
 ]

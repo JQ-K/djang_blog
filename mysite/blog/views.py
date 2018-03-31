@@ -18,6 +18,15 @@ from django.views.generic.detail import DetailView
 from django.core.urlresolvers import reverse
 
 
+from django.contrib.admin.views.decorators import staff_member_required
+
+class AdminRequiredMixin(object):
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super(AdminRequiredMixin, cls).as_view(**initkwargs)
+        return staff_member_required(view)
+
+
 def blog_index(request):
 
     context ={
@@ -45,7 +54,7 @@ class ArticleListView(ListView):
 
 
 #publish  class
-class ArticlePublishView(FormView):
+class ArticlePublishView(AdminRequiredMixin, FormView):
     template_name = 'article_publish.html'
     form_class = ArticlePublishForm
     success_url = '/blog/'
@@ -56,7 +65,7 @@ class ArticlePublishView(FormView):
 
 
 # look the articles
-class ArticleDetailView(DetailView):
+class ArticleDetailView(AdminRequiredMixin, DetailView):
     template_name = 'article_detail.html'
 
     def get_object(self, **kwargs):
