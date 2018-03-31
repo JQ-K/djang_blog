@@ -15,6 +15,8 @@ from models import Article
 from django.views.generic.detail import DetailView
 # Create your views here
 
+from django.core.urlresolvers import reverse
+
 
 def blog_index(request):
 
@@ -67,3 +69,34 @@ class ArticleDetailView(DetailView):
         except Article.DoesNotExist:
             raise Http404("Article does not exist")
         return article
+
+
+#edit article 
+class ArticleEditView(FormView):
+    template_name = 'article_publish.html'
+    form_class = ArticlePublishForm
+    article = None
+
+    def get_initial(self, **kwargs):
+        title = self.kwargs.get('title')
+        try:
+            self.article = Article.objects.get(title=title)
+            initial = {
+                'title': title,
+                'content': self.article.content_md,
+                'tags': self.article.tags,
+            }
+            return initial
+        except Article.DoesNotExist:
+            raise Http404("Article does not exist")
+
+    def form_valid(self, form):
+        form.save(self.request, self.article)
+        return super(ArticleEditView, self).form_valid(form)
+
+    def get_success_url(self):
+        title = self.request.POST.get('title')
+        success_url = reverse('article_detail', args=(title,))
+        return success_url
+ 
+    
