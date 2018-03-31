@@ -1,6 +1,6 @@
 #coding:utf-8
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.template import loader
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -9,11 +9,12 @@ from django.views.generic.list import ListView
 
 
 from django.views.generic.edit import FormView
-
 from forms import ArticlePublishForm
-
 from models import Article
+
+from django.views.generic.detail import DetailView
 # Create your views here
+
 
 def blog_index(request):
 
@@ -50,3 +51,19 @@ class ArticlePublishView(FormView):
     def form_valid(self, form):
         form.save(self.request.user.username)
         return super(ArticlePublishView, self).form_valid(form)
+
+
+# look the articles
+class ArticleDetailView(DetailView):
+    template_name = 'article_detail.html'
+
+    def get_object(self, **kwargs):
+        title = self.kwargs.get('title')
+        try:
+            article = Article.objects.get(title=title)
+            article.views += 1
+            article.save()
+            article.tags = article.tags.split()
+        except Article.DoesNotExist:
+            raise Http404("Article does not exist")
+        return article
